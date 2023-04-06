@@ -1,8 +1,6 @@
 # CsPay WooCommerce Payment Gateway
 
 
-<!-- **Donate link:** https://bosun.me/donate -->
-
 **Tags:** cross-switch ghana, cspay, woocommerce, payment gateway, harmony plugins, verve, ghana, benin, mastercard, visa
 
 
@@ -10,9 +8,9 @@
 
 **Stable tag:** 5.6.2
 
-**License:** GPLv2 or later
+**License:** MIT or later
 
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html
+**License URI:** https://github.com/harmonizerblinks/cspay-woocommerce/blob/master/LICENSE
 
 CsPay WooCommerce Payment Gateway allows you to accept online payments from local and international customers
 
