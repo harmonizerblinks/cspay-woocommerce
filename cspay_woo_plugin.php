@@ -741,16 +741,17 @@ function cspay_woocommerce_init()
           wc_add_notice( sprintf( __( '%s payment Completed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'success' );
           $order_returl = $this->get_return_url( $order );
     
-          // header('Location: ' . $order_returl);
+          header('Location: ' . $order_returl);
+          return true;
         } else {
           $respMessage = 'Payment Error from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
           $logger->info("Response Message = ". $respMessage, $this->$context );
           $order->add_order_note($respMessage);
           $cart_url = $woocommerce->cart->get_cart_url();
-          // wc_add_notice( sprintf( __( '%s payment failed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
-          // header('Location: ' . $cart_url);
+          wc_add_notice( sprintf( __( '%s payment failed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
+          header('Location: ' . $cart_url);
           
-          //  exit();
+           exit();
         }
       }
     
@@ -830,7 +831,7 @@ function cspay_woocommerce_init()
             exit;
           }
     }
-     
+
 }
 
    /**
