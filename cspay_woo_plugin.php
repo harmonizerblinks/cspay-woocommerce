@@ -92,7 +92,7 @@ function cspay_woocommerce_init()
 
             add_action('woocommerce_api_wc_cspay', array($this, 'handle_callback'));
             
-		        add_action( 'woocommerce_api_cpay_callback', array( $this, 'cspay_callback' ) );
+		        add_action( 'woocommerce_api_cspay_callback', array( $this, 'cspay_callback' ) );
        }
     
 
@@ -222,7 +222,7 @@ function cspay_woocommerce_init()
      **/
     public function process_payment( $order_id ) {
     
-      echo '<script>console.log("<br/> Order id: ' . $order_id . '")</script>';
+      // echo '<script>console.log("<br/> Order id: ' . $order_id . '")</script>';
       // var_dump($order_id);
       // $this->debug_to_console($order_id);
 
@@ -237,47 +237,47 @@ function cspay_woocommerce_init()
       // echo '<script>console.log("<br/>Country Code: ' . $this->country_code . '")</script>';
 
       $cspay_url = 'https://api.cspay.app/app/CreateCheckout?country='.$this->country_code;
-      echo '<script>console.log("Url: ' . $cspay_url . '")</script>';
+      // echo '<script>console.log("Url: ' . $cspay_url . '")</script>';
 
       $amount = $order->total;
-      echo '<script>console.log("AMOUNT: ' . $amount . '")</script>';
+      // echo '<script>console.log("AMOUNT: ' . $amount . '")</script>';
 
       $currency=$this->currency_code;
-      echo '<script>console.log("CURRENCY: ' . $currency . '")</script>';
+      // echo '<script>console.log("CURRENCY: ' . $currency . '")</script>';
 
       $first_name = method_exists( $order, 'get_billing_first_name' ) ? $order->get_billing_first_name() : $order->billing_first_name;
       $last_name  = method_exists( $order, 'get_billing_last_name' ) ? $order->get_billing_last_name() : $order->billing_last_name; 
       $name = $first_name . ' ' . $last_name;
       
-      echo '<script>console.log("NAME: ' . $name . '")</script>';
+      // echo '<script>console.log("NAME: ' . $name . '")</script>';
       
       $email = method_exists( $order, 'get_billing_email' ) ? $order->get_billing_email() : $order->billing_email;
-      echo '<script>console.log("EMAIL: ' . $email . '")</script>';
+      // echo '<script>console.log("EMAIL: ' . $email . '")</script>';
       $mobile = method_exists( $order, 'get_billing_phone' ) ? $order->get_billing_phone() : $order->billing_phone;
-      echo '<script>console.log("MOBILE: ' . $mobile . '")</script>';
+      // echo '<script>console.log("MOBILE: ' . $mobile . '")</script>';
       // $trnx = $this->trnx_ref;
       // echo '<script>console.log("TRANx: ' . $trnx . '")</script>';
       $transaction_id = $order_id.$this->separator.time();
-      echo '<script>console.log("ORDER_ID: ' . $transaction_id . '")</script>';
+      // echo '<script>console.log("ORDER_ID: ' . $transaction_id . '")</script>';
       $options = $this->payment_options;
-      echo '<script>console.log("OPTIONS: ' . $options . '")</script>';
+      // echo '<script>console.log("OPTIONS: ' . $options . '")</script>';
       $desc = 'Payment for order '.$order_id.' and transaction_ref '.$transaction_id;
-      echo '<script>console.log("ORDER_DESC: ' . $desc . '")</script>';
+      // echo '<script>console.log("ORDER_DESC: ' . $desc . '")</script>';
       $merchant = $this->merchant_code;
-      echo '<script>console.log("merchant: ' . $merchant . '")</script>';
+      // echo '<script>console.log("merchant: ' . $merchant . '")</script>';
       $callbackurl = $this->client_callback_url;
-      echo '<script>console.log("callbackurl: ' . $callbackurl . '")</script>';
+      // echo '<script>console.log("callbackurl: ' . $callbackurl . '")</script>';
       $redirecturl = get_site_url() . "/wc-api/cspay_callback";
-      echo '<script>console.log("redirecturl: ' . $redirecturl . '")</script>';
+      // echo '<script>console.log("redirecturl: ' . $redirecturl . '")</script>';
 
       $new_data = array('merchant'=> $merchant, 'name' => $name, 'mobile' => $mobile, 'email' => $email, 'amount' => $amount, 'order_id' => $transaction_id, 'order_desc' => $desc, 'options'=>$options, 'currency'=> $currency, 'callbackurl' => $callbackurl, 'redirecturl' => $redirecturl);
       // echo '<script>console.log("new_data: ' . json_encode($new_data) . '")</script>';
       $payload = json_encode($new_data);
 
-      echo '<script>console.log("payload: ' . $payload . '")</script>';
+      // echo '<script>console.log("payload: ' . $payload . '")</script>';
       
       $auth = $merchant.':'.$merchant;
-      echo '<script>console.log("auth: ' . $auth . '")</script>';
+      // echo '<script>console.log("auth: ' . $auth . '")</script>';
       $headers = array(
         'Content-Type' => 'application/json',
         'Authorization' => 'Bearer ' . $auth,
@@ -292,21 +292,21 @@ function cspay_woocommerce_init()
       // 'sslverify' => false,
       $cspay_request = wp_remote_post( $cspay_url, $args );
       
-      echo '<script>console.log("request response: ' . json_encode($cspay_request) . '")</script>';
+      // echo '<script>console.log("request response: ' . json_encode($cspay_request) . '")</script>';
 
       if (is_wp_error($cspay_request)) 
 			  throw new Exception( __( 'There is issue for connectin payment gateway. Sorry for the inconvenience.', 'cspay' ) );
       if (empty($cspay_request['body']))
         throw new Exception( __( 'CsPay could not process checkout.', 'cspay' ) );
 
-      echo '<script>console.log("response_body: ' . $cspay_request['body'] . '")</script>';
+      // echo '<script>console.log("response_body: ' . $cspay_request['body'] . '")</script>';
 
       $response = json_decode($cspay_request['body'], true);
 
-      echo '<script>console.log("decoded response_body: ' . json_encode($response) . '")</script>';
+      // echo '<script>console.log("decoded response_body: ' . json_encode($response) . '")</script>';
 
 		  $resp = $response['data'];
-      echo '<script>console.log("response Data: ' .json_encode($resp). '")</script>';
+      // echo '<script>console.log("response Data: ' .json_encode($resp). '")</script>';
 
 
       // echo '<script>console.log("raw response_body: ' . $cspay_request['body'] . '")</script>';
@@ -710,22 +710,30 @@ function cspay_woocommerce_init()
 
 
       public function cspay_callback() {
+        
+      echo '<script>console.log("Callback Redirect: ")</script>';
+
         $logger = wc_get_logger();
         $ORDER_ID = explode($this->separator,$_GET['order_id'])[0];
+        echo '<script>console.log("ORDERID : '. $ORDER_ID . '")</script>';
         $order = wc_get_order($ORDER_ID);
         $status_code = $_GET['status_code'];
+        echo '<script>console.log("Status Code: '. $status_code . '")</script>';
         $status_message = $_GET['status_message'];
+        echo '<script>console.log("Callback status_message: '.$status_message .'")</script>';
         $trans_ref_no = $_GET['transaction_no'];
+        echo '<script>console.log("Callback transaction_no: '.$trans_ref_no .'")</script>';
         // $signature = $_GET['signature'];
         global $woocommerce;
-        if ( !function_exists( 'wc_add_notice' ) ) { 
-              require_once '/includes/wc-notice-functions.php'; 
-          } 
-        if($status_code === 1)
+        // if ( !function_exists( 'wc_add_notice' ) ) { 
+        //   require_once '/includes/wc-notice-functions.php'; 
+        // }
+
+        if($status_code == 1)
         {
           $order->payment_complete();
           $order->reduce_order_stock();
-          $woocommerce->cart->empty_cart();
+          WC()->cart->empty_cart();
           update_option('webhook_debug', $_GET);
           $respMessage = 'Payment successful from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
           $order->add_order_note($respMessage );
@@ -733,17 +741,16 @@ function cspay_woocommerce_init()
           wc_add_notice( sprintf( __( '%s payment Completed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'success' );
           $order_returl = $this->get_return_url( $order );
     
-          header('Location: ' . $order_returl);
-        }
-        else
-        {
-          $respMessage = 'Payment Error from Interpayafrica <br>order_id='.$ORDER_ID.", Interpayafrica Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
+          // header('Location: ' . $order_returl);
+        } else {
+          $respMessage = 'Payment Error from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
           $logger->info("Response Message = ". $respMessage, $this->$context );
-          $order->add_order_note($respMessage );
-           $cart_url = $woocommerce->cart->get_cart_url();
-           wc_add_notice( sprintf( __( '%s payment failed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
-           header('Location: ' . $cart_url);
-            exit();
+          $order->add_order_note($respMessage);
+          $cart_url = $woocommerce->cart->get_cart_url();
+          // wc_add_notice( sprintf( __( '%s payment failed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
+          // header('Location: ' . $cart_url);
+          
+          //  exit();
         }
       }
     
