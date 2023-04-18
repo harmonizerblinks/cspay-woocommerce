@@ -265,7 +265,7 @@ function cspay_woocommerce_init()
       // echo '<script>console.log("ORDER_DESC: ' . $desc . '")</script>';
       $merchant = $this->merchant_code;
       // echo '<script>console.log("merchant: ' . $merchant . '")</script>';
-      $callbackurl = $this->client_callback_url;
+      $callbackurl = $this->client_callback_url.'?order_id='.$transaction_id;
       // echo '<script>console.log("callbackurl: ' . $callbackurl . '")</script>';
       $redirecturl = get_site_url() . "/wc-api/cspay_callback";
       // echo '<script>console.log("redirecturl: ' . $redirecturl . '")</script>';
@@ -582,7 +582,7 @@ function cspay_woocommerce_init()
             $checkout_url = wc_get_checkout_url();
             wc_add_notice( sprintf( __( 'CsPay payment Cancel by Customer!', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
             header('Location: ' . $checkout_url);
-            
+
           }else {
             $respMessage = 'Payment Error from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
             $logger->info("Response Message = ". $respMessage, $this->$context );
@@ -612,69 +612,81 @@ function cspay_woocommerce_init()
         $transac_id = isset($_GET['transaction_no']) ? $_GET['transaction_no'] : '';
         $status_message = isset($_GET['status_message']) ? $_GET['status_message'] : '';
         
+        if($cust_ref) {
 
-        $order_id = wc_get_order_id_by_order_key($cust_ref);
-        $order = wc_get_order( $order_id );
+          $ORDER_ID = explode($this->separator,$_GET['order_id'])[0];
+          // echo '<script>console.log("ORDERID : '. $ORDER_ID . '")</script>';
+          $order = wc_get_order($ORDER_ID);
+          // $order_id = wc_get_order_id_by_order_key($cust_ref);
+          // $order = wc_get_order( $order_id );
          
-        if (isset($_GET['status_message'])) #first
-          {
-            if ($_GET['status_message'] == "FAILED" || $_GET['status_message'] == "FAIL") 
-              {
-                // error_log("From Page");
-              }
-          }
-        else
-          {
-            #json callback from amfp itself
-            $callbackRequest = json_decode(@file_get_contents('php://input'), true);
-            
-            
-            $network_id = $callbackRequest['transaction_no'];
-            $exttrid = $callbackRequest['order_id'];
-            $resp_code = $callbackRequest['status_code'];
-            $resp_desc = $callbackRequest['status_message'];
-            $trnx_stat = explode("/", $resp_code);
-            $the_stat = $trnx_stat[0];
-      
-            $order_id = wc_get_order_id_by_order_key($exttrid);
-            $order = wc_get_order( $order_id );
-      
-      
-            if ($the_stat == "1") #passed 
-              {
-                $order->add_order_note( __( $resp_desc, 'cspay' ) );
-                $order->payment_complete();
-                $order->update_status( 'completed', __( $resp_desc, 'cspay' ) );     
-              } 
-            elseif ($the_stat == "-1") 
-              {
-                $order->add_order_note( __( $resp_desc, 'cspay' ) );
-                $order->update_status( 'cancelled', __( $resp_desc, 'cspay' ) );                
-              }
-            else #failed
-              {
-                $order->add_order_note( __( $resp_desc, 'cspay' ) );
-                $order->update_status( 'failed', __( $resp_desc, 'cspay' ) );                 
-              }
-          }
+          if (isset($_GET['status_message'])) #first
+            {
+              if ($_GET['status_message'] == "FAILED" || $_GET['status_message'] == "FAIL") 
+                {
+                  // error_log("From Page");
+                }
+            }
+          else
+            {
+              #json callback from amfp itself
+              $callbackRequest = json_decode(@file_get_contents('php://input'), true);
+              
+              
+              $network_id = $callbackRequest['transaction_no'];
+              $exttrid = $callbackRequest['order_id'];
+              $resp_code = $callbackRequest['status_code'];
+              $resp_desc = $callbackRequest['status_message'];
+              // $trnx_stat = explode("/", $resp_code);
+              // $the_stat = $trnx_stat[0];
+              
+              $ORDER_ID = explode($this->separator,$callbackRequest['order_id'])[0];
         
-    
-        if($status == 0)
-          {
-            header('Location:'.$this->get_return_url( $order ));
-          }
-        elseif($status==-1)
-          { 
-            // Technical error contact
-            wp_die( "Payment Was not successful", "cspay", array( 'response' => 200 ) );
-          }
-        elseif($status==-2)
-          { 
-            // User cancelled transaction
-            $order->update_status( 'cancelled', __( 'Order cancelled by User on Cspay platform.', 'cspay' ) );
-            header('Location:'.home_url());
-            exit;
-          }
+              // $order_id = wc_get_order_id_by_order_key($exttrid);
+              $order = wc_get_order( $ORDER_ID );
+        
+        
+              if ($resp_code == 1) #passed 
+                {
+                  $order->add_order_note( __( $resp_desc, 'cspay' ) );
+                  $order->payment_complete();
+                  $order->update_status( 'completed', __( $resp_desc, 'cspay' ) );     
+                } 
+              elseif ($resp_code == "-1") 
+                {
+                  $order->add_order_note( __( $resp_desc, 'cspay' ) );
+                  $order->update_status( 'cancelled', __( $resp_desc, 'cspay' ) );                
+                }
+              else #failed
+                {
+                  $order->add_order_note( __( $resp_desc, 'cspay' ) );
+                  $order->update_status( 'failed', __( $resp_desc, 'cspay' ) );                 
+                }
+            }
+          
+      
+          if($status == 1)
+            {
+              // header('Location:'.$this->get_return_url( $order ));
+              wp_die( "Payment Was successful", "cspay", array( 'response' => 200 ) );
+            }
+          elseif($status==-1)
+            { 
+              // Technical error contact
+              wp_die( "Payment Was not successful", "cspay", array( 'response' => 200 ) );
+            }
+          elseif($status==-2)
+            { 
+              // User cancelled transaction
+              $order->update_status( 'cancelled', __('Order cancelled by User on Cspay platform.', 'cspay'));
+
+              wp_die( "Payment Was cancel", "cspay", array( 'response' => 200 ) );
+              // header('Location:'.home_url());
+              exit;
+            }
+        }else {
+          wp_die( "Payment Was not successful", "cspay", array( 'response' => 200 ) );
+        }
     }
 
 }
