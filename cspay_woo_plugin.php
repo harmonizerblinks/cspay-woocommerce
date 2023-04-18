@@ -7,7 +7,7 @@ Version: 1.0.0
 Author: Harmony Alabi
 Author URI: https://github.com/harmonizerblinks
 License: MIT
-License URI: http://www.gnu.org/licenses/mit
+License URI: https://github.com/harmonizerblinks/cspay-woocommerce/blob/master/LICENCE
 WC requires at least: 3.0.0
 WC tested up to: 4.0
 */
@@ -321,7 +321,7 @@ function cspay_woocommerce_init()
         $order->save();
         
         // Mark as on-hold (we're awaiting the payment)
-        $order->update_status( 'on-hold', __( 'Awaiting cspay payment', 'cspay' ) );
+        // $order->update_status( 'on-hold', __( 'Awaiting cspay payment', 'cspay' ) );
 
         return array(
           'result'    => 'success',
@@ -352,177 +352,6 @@ function cspay_woocommerce_init()
           // 'redirect'  => $this->get_return_url($order)
       );
     }
-
-    // function process_payment($order_id)
-    // {
-    //   echo $order_id;
-    //   debug_to_console($order_id);
-      // global $woocommerce;
-    //   // $order = new WC_Order( $order_id );
-    //   $order = wc_get_order( $order_id );
-    //   debug_to_console($order);
-    //   $data = json_decode($order);
-    //   debug_to_console($data);
-      
-
-    //   $cspay_url = 'https://api.cspay.app/app/CreateCheckout?country='.$this->country_code;
-
-    //   $currency=$this->extract_currency();
-
-    //   $conversion_rate = floatval($this->conversion_rate);
-
-    //   if ($currency == $this->default_currency) {
-    //     $amount = floatval($data->total);
-    //   }else{
-    //     $amount = floatval($data->total) * $conversion_rate; //converting to GHS. if amount is already in GHS, then rate is expected to be 1, else USD 10 * 6.17(convesion rate) = GHS 61.72
-    //   }
-
-    //   if ($this->currency_code == $this->default_currency) {
-    //     $currency_val = $amount;
-    //   }else{
-    //     if ($currency == $this->currency_code) {
-    //       $currency_val = floatval($data->total);
-    //     }else{
-    //       $currency_val = floatval($data->total) * $conversion_rate; //converting to GHS. if amount is already in GHS, then rate is expected to be 1, else USD 10 * 6.17(convesion rate) = GHS 61.72
-    //     }
-    //   }
-
-    //   // customer details
-      // $first_name = method_exists( $order, 'get_billing_first_name' ) ? $order->get_billing_first_name() : $order->billing_first_name;
-      // $last_name  = method_exists( $order, 'get_billing_last_name' ) ? $order->get_billing_last_name() : $order->billing_last_name; 
-      // $name = $first_name . ' ' . $last_name;
-    //   $name = "Test Customer";
-      // $email = method_exists( $order, 'get_billing_email' ) ? $order->get_billing_email() : $order->billing_email;
-      // $mobile = method_exists( $order, 'get_billing_phone' ) ? $order->get_billing_phone() : $order->billing_phone;
-    //   $email = "test@gmail.com";
-    //   $mobile = "+233546467407";
-      
-    //   $trnx_ref = $this -> trnx_ref;
-    //   $order_id = $data->order_key; //.'_'.time();
-    //   $options = $this->payment_options;
-    //   $desc = 'Payment for order _'.$order_id.'_'.$trnx_ref;
-      
-    //   $trans_type = "DR";
-    //   // $nickname = $this->client_nickname;
-    //   $merchant = $this->merchant_code;
-    //   // $app_id = $this->app_id;
-    //   // $app_key = $this->app_key;
-    //   // $client_secret = $this -> secret_key;
-    //   // $time = date("Y-m-d H:i:s");
-      // $callbackurl = $this->client_callback_url;
-      // // $redirecturl = $this->client_redirect_url;
-      // $redirecturl = $this->get_return_url($order);
-
-    //   $new_data = array('app_id' => $merchant, 'app_key' => $merchant, 'merchant'=> $merchant, 'name' => $name, 'mobile' => $mobile, 'email' => $email, 'amount' => $currency_val, 'order_id' => $order_id, 'order_desc' => $desc, 'options'=>$options, 'currency'=> $this->currency_code, 'callbackurl' => $callbackurl, 'redirecturl' => $this->get_return_url($order));
-
-    //   $data_string = json_encode($new_data);
-
-    //   // $signature =  hash_hmac ( 'sha256' , $data_string , $app_key );
-    //   $auth = $merchant.':'.$merchant;
-    //   $data_string = json_encode($new_data);
-
-    //   // $signature =  hash_hmac ( 'sha256' , $data_string , $app_key );
-    //   $auth = $merchant.':'.$merchant;
-    //   debug_to_console($new_data);
-
-      // $headers = array(
-      //   'Content-Type' => 'application/json',
-      //   'Accept' => 'application/json',
-      //   'Authorization' => 'Bearer ' . $this->auth,
-      // );
-  
-      // $args = array(
-      //   'headers' => $headers,
-      //   'timeout' => 60,
-      // );
-
-    //   $args['body'] = $new_data;
-  
-    //   $request = wp_remote_post( $cspay_url, $args );
-    //   debug_to_console($request);
-    //   if ( ! is_wp_error( $request ) && 200 === wp_remote_retrieve_response_code( $request ) ) {
-
-    //     $payment_response = json_decode(wp_remote_retrieve_body($refund_request));
-        
-    //     debug_to_console($payment_response);
-
-    //     if($payment_response->status_code) {
-    //       // $amount         = wc_price( $amount, array( 'currency' => $order_currency ) );
-    //       $redirect_data = $payment_response->data;
-    //       $status_message = $payment_response->status_code;
-    //       // $order->add_order_note( $status_message );
-
-    //       debug_to_console($redirect_data);
-    //       debug_to_console($response->data->checkout_url);
-
-    //       // return true;
-    //       return array(
-    //         'result'    => "success",
-    //         'redirect'  => $response->data->checkout_url
-    //       );
-    //     }else {
-
-    //     }
-
-    //   } else {
-
-    //     $payment_response = json_decode( wp_remote_retrieve_body( $request ) );
-
-    //     if ( isset( $payment_response->status_message ) ) {
-    //       return new WP_Error( 'error', $payment_response->status_message );
-    //     } else {
-    //       return new WP_Error( 'error', __( 'Can&#39;t process payment at the moment. Try again later.', 'woo-paystack' ) );
-    //     }
-    //   }
-        
-    //   // $ch = curl_init($service_url);      
-    //   // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");   
-    //   // curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string); 
-    //   // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    //   // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);      
-    //   // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    //   // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    //   //   'Authorization: '.$auth,
-    //   //   'Content-Type: application/json' ,
-    //   //   'timeout: 80',
-    //   //   'open_timeout: 80'
-    //   //   )  
-    //   // ); 
-
-    //   // $result = curl_exec($ch);
-          
-    //   // $callbackRequest = json_decode($result, true);
-
-    //   // $resp_code = $callbackRequest['status_code'];
-    //   // $resp_desc = $callbackRequest['status_message'];
-
-
-    //   // if( $resp_code == 1) #successful
-    //   //   {
-    //   //     // Mark as on-hold (we're awaiting the payment)
-    //   //     $order->update_status( 'on-hold', __( 'Awaiting offline payment', 'cspay' ) );
-          
-    //   //     // Reduce stock levels
-    //   //     $order->reduce_order_stock();
-
-    //   //     // Remove cart
-    //   //     // WC()->cart->empty_cart();
-
-    //   //     $redirect_url = $callbackRequest['data']['checkout_url'];
-    //   //     return array('result' => 'success','redirect'  => $redirect_url);
-
-    //   //   }
-    //   // else
-    //   //   {
-    //   //     wc_add_notice(  'Error: '.$resp_desc, 'error' );
-    //   //     return array(
-    //   //      'result'    => $resp_desc,
-    //   //      'redirect'  => $this->get_return_url( $order )
-    //   //       );
-    //   //   }
-    // }
-
-
 
 
       function extract_currency(){
@@ -711,47 +540,63 @@ function cspay_woocommerce_init()
 
       public function cspay_callback() {
         
-      echo '<script>console.log("Callback Redirect: ")</script>';
-
+        echo '<script>console.log("Callback Redirect: ")</script>';
+        
         $logger = wc_get_logger();
-        $ORDER_ID = explode($this->separator,$_GET['order_id'])[0];
-        echo '<script>console.log("ORDERID : '. $ORDER_ID . '")</script>';
-        $order = wc_get_order($ORDER_ID);
-        $status_code = $_GET['status_code'];
-        echo '<script>console.log("Status Code: '. $status_code . '")</script>';
-        $status_message = $_GET['status_message'];
-        echo '<script>console.log("Callback status_message: '.$status_message .'")</script>';
-        $trans_ref_no = $_GET['transaction_no'];
-        echo '<script>console.log("Callback transaction_no: '.$trans_ref_no .'")</script>';
-        // $signature = $_GET['signature'];
-        global $woocommerce;
-        // if ( !function_exists( 'wc_add_notice' ) ) { 
-        //   require_once '/includes/wc-notice-functions.php'; 
-        // }
+        $cust_ref = isset($_GET['order_id']) ? $_GET['order_id'] : null;
+        if($cust_ref != null){
+          $ORDER_ID = explode($this->separator,$_GET['order_id'])[0];
+          // echo '<script>console.log("ORDERID : '. $ORDER_ID . '")</script>';
+          $order = wc_get_order($ORDER_ID);
+          $status_code = $_GET['status_code'];
+          // echo '<script>console.log("Status Code: '. $status_code . '")</script>';
+          $status_message = isset($_GET['status_message']) ? $_GET['status_message'] : '';
+          // echo '<script>console.log("Callback status_message: '.$status_message .'")</script>';
+          $trans_ref_no = isset($_GET['transaction_no']) ? $_GET['transaction_no'] : '';
+          // echo '<script>console.log("Callback transaction_no: '.$trans_ref_no .'")</script>';
+          // $signature = $_GET['signature'];
+          global $woocommerce;
+          // if ( !function_exists( 'wc_add_notice' ) ) { 
+          //   require_once '/includes/wc-notice-functions.php'; 
+          // }
 
-        if($status_code == 1)
-        {
-          $order->payment_complete();
-          $order->reduce_order_stock();
-          WC()->cart->empty_cart();
-          update_option('webhook_debug', $_GET);
-          $respMessage = 'Payment successful from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
-          $order->add_order_note($respMessage );
-    
-          wc_add_notice( sprintf( __( '%s payment Completed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'success' );
-          $order_returl = $this->get_return_url( $order );
-    
-          header('Location: ' . $order_returl);
-          return true;
+          if($status_code == 1)
+          {
+            $order->payment_complete();
+            $order->reduce_order_stock();
+            WC()->cart->empty_cart();
+            update_option('webhook_debug', $_GET);
+            $respMessage = 'Payment successful from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
+            $order->add_order_note($respMessage );
+      
+            wc_add_notice( sprintf( __( 'CsPay payment Completed! Transaction ID: '.$trans_ref_no, 'woocommerce' ), $this->title, $trans_ref_no ), 'success' );
+            $order_returl = $this->get_return_url( $order );
+      
+            header('Location: ' . $order_returl);
+            return true;
+          } elseif($status_code == 1)
+          {
+            $respMessage = 'Payment was cancel on CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
+            $logger->info("Response Message = ". $respMessage, $this->$context );
+            $order->add_order_note($respMessage);
+            $checkout_url = wc_get_checkout_url();
+            wc_add_notice( sprintf( __( 'CsPay payment Cancel by Customer!', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
+            header('Location: ' . $checkout_url);
+            
+          }else {
+            $respMessage = 'Payment Error from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
+            $logger->info("Response Message = ". $respMessage, $this->$context );
+            $order->add_order_note($respMessage);
+            // $cart_url = $woocommerce->cart->get_cart_url();
+            $checkout_url = wc_get_checkout_url();
+            wc_add_notice( sprintf( __( 'CsPay payment failed! Transaction ID: '.$trans_ref_no, 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
+            header('Location: ' . $checkout_url);
+            
+            exit();
+          }
         } else {
-          $respMessage = 'Payment Error from CsPay <br>order_id='.$ORDER_ID.", CsPay Ref No = ".$trans_ref_no.", status_code = ".$status_code.",status_message = ".$status_message;
-          $logger->info("Response Message = ". $respMessage, $this->$context );
-          $order->add_order_note($respMessage);
           $cart_url = $woocommerce->cart->get_cart_url();
-          wc_add_notice( sprintf( __( '%s payment failed! Transaction ID: %d', 'woocommerce' ), $this->title, $trans_ref_no ), 'error' );
           header('Location: ' . $cart_url);
-          
-           exit();
         }
       }
     
@@ -775,7 +620,7 @@ function cspay_woocommerce_init()
           {
             if ($_GET['status_message'] == "FAILED" || $_GET['status_message'] == "FAIL") 
               {
-                error_log("From Page");
+                // error_log("From Page");
               }
           }
         else
