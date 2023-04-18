@@ -222,19 +222,8 @@ function cspay_woocommerce_init()
      **/
     public function process_payment( $order_id ) {
     
-      // echo '<script>console.log("<br/> Order id: ' . $order_id . '")</script>';
-      // var_dump($order_id);
-      // $this->debug_to_console($order_id);
-
+      echo '<script>console.log("<br/> Order id: ' . $order_id . '")</script>';
       $order = wc_get_order( $order_id );
-      // echo '<script>console.log("<br/> Order: ' . $order . '")</script>';
-      // $this->debug_to_console($order);
-      
-      // $data = json_decode($order);
-      // echo '<script>console.log("Order json: ' . $data . '")</script>';
-      // $this->debug_to_console($data);
-
-      // echo '<script>console.log("<br/>Country Code: ' . $this->country_code . '")</script>';
 
       $cspay_url = 'https://api.cspay.app/app/CreateCheckout?country='.$this->country_code;
       // echo '<script>console.log("Url: ' . $cspay_url . '")</script>';
@@ -316,35 +305,24 @@ function cspay_woocommerce_init()
       echo '<script>console.log("status_code: ' . $response['status_code'] . '")</script>';
       echo '<script>console.log("transaction_no: ' . $resp['transaction_no'] . '")</script>';
       echo '<script>console.log("checkout url: ' . $resp['checkout_url'] . '")</script>';
-      if($response['status_code'] === 1) {
-        $order->set_transaction_id($resp['transaction_no']);
-        $order->save();
-        
-        // Mark as on-hold (we're awaiting the payment)
-        // $order->update_status( 'on-hold', __( 'Awaiting cspay payment', 'cspay' ) );
+        if($response['status_code'] === 1) {
+          $order->set_transaction_id($resp['transaction_no']);
+          $order->save();
+          
+          // Mark as on-hold (we're awaiting the payment)
+          // $order->update_status( 'on-hold', __( 'Awaiting cspay payment', 'cspay' ) );
 
-        return array(
-          'result'    => 'success',
-          'redirect'  => $resp['checkout_url']
-        );
-      } else {
-        $order->add_order_note($response['status_message']);
+          return array(
+            'result'    => 'success',
+            'redirect'  => $resp['checkout_url']
+          );
+        } else {
+          $order->add_order_note($response['status_message']);
 
-        return array(
-          'result'    => 'success'
-        );
-      }
-
-      // $order->set_transaction_id($transaction_id);
-      // $order->save();
-
-              
-              
-      // Reduce stock levels
-      // $order->reduce_order_stock();
-              
-      // Remove cart
-      // WC()->cart->empty_cart();
+          return array(
+            'result'    => 'success'
+          );
+        }
               
       // Return thankyou redirect
       return array(
